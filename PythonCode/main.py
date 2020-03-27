@@ -7,7 +7,7 @@ import pymysql
 class DBObject:
     __metaclass__ = Singleton
     connector = None
-    __host: str = "3.92.173.228"
+    __host: str = "54.147.252.47"
     __user: str = "monty"
     __passwd: str = "some_pass"
     __dbname: str = "serv"
@@ -15,7 +15,7 @@ class DBObject:
 
     def __init__(self):
         try:
-            self.connector = pymysql.connect(host=self.__host, port=3306, user=self.__user, passwd=self.__passwd, db=self.__dbname)
+            self.connector = pymysql.connect(host=self.__host, port=3306, user=self.__user, passwd=self.__passwd, db=self.__dbname, connect_timeout=2)
             self.__iniciado = True
         except pymysql.MySQLError as e:
             self.__iniciado = False
@@ -142,10 +142,17 @@ def lambda_handler(event, context):
     return resultado
 
 
-dicc: dict = {"username": "Pato", "password": "Pato", "peticion": "signin"}
+dicc: dict = {"username": "Pato", "password": "Pato", "peticion": "login"}
 print(lambda_handler(dicc, None))
 
 """
+{
+    "peticion": "login",
+    "username": "Pato",
+    "password": "Pato"
+}
+
+
 0: No hay query
 1: Conecxion a la db no correcta
 2: Tipo de peticion vacia
