@@ -7,7 +7,7 @@ import pymysql
 class DBObject:
     __metaclass__ = Singleton
     connector = None
-    __host: str = "192.168.1.41"
+    __host: str = "3.92.173.228"
     __user: str = "monty"
     __passwd: str = "some_pass"
     __dbname: str = "serv"
@@ -20,7 +20,6 @@ class DBObject:
         except pymysql.MySQLError as e:
             self.__iniciado = False
             print(e)
-            sys.exit()
 
     def login(self, username: str, passwd: str):
         if variableCorrecta(username) is False or variableCorrecta(passwd) is False:
@@ -75,29 +74,41 @@ class DBObject:
 conector = DBObject()
 
 
+# """
+# {
+#   "peticion": "login",
+#   "username": "Pato",
+#   "password": "Pato"
+# }
+# """
 def resolverLogin(datos: dict):
     usuario = datos.get("username")
     pss = datos.get("password")
     if usuario is None:
-        resultado = "{\"resultado\":6,\"status\":\"username null\"}"
+        resultado = {"resultado": 6, "statusCode": "username null"}
     elif pss is None:
-        resultado = "{\"resultado\":7,\"status\":\"password null\"}"
+        resultado = {"resultado": 7, "statusCode": "password null"}
     else:
-        resultado = "{\"resultado\":69,\"status\":\"OK\",\"accesoConcedido\":" + str(conector.login(usuario, pss)) +\
-                    "}"
+        resultado = {"resultado": 69, "statusCode": "OK", "accesoConcedido": str(conector.login(usuario, pss))}
     return resultado
 
 
+# """
+# {
+#   "peticion": "signin",
+#   "username": "Pato",
+#   "password": "Pato"
+# }
+# """
 def resolverSignin(datos: dict):
     usuario = datos.get("username")
     pss = datos.get("password")
     if usuario is None:
-        resultado = "{\"resultado\":6,\"status\":\"username null\"}"
+        resultado = {"resultado": 6, "statusCode": "username null"}
     elif pss is None:
-        resultado = "{\"resultado\":7,\"status\":\"password null\"}"
+        resultado = {"resultado": 7, "statusCode": "password null"}
     else:
-        resultado = "{\"resultado\":69,\"status\":\"OK\",\"accesoConcedido\":" + str(conector.singin(usuario, pss)) +\
-                    "}"
+        resultado = {"resultado": 69, "statusCode": "OK", "accesoConcedido": str(conector.singin(usuario, pss))}
     return resultado
 
 
@@ -106,34 +117,33 @@ def resolverSolicitud(datos: dict):
     if size == 3:
         peticion = datos.get("peticion")
         if peticion is None:
-            resultado = "{\"resultado\":2,\"status\":\"Tipo de peticion vacia\"}"
+            resultado = {"resultado": 2, "statusCode": "Tipo de peticion vacia"}
         else:
             if peticion == "login":
                 resultado = resolverLogin(datos)
             elif peticion == "signin":
                 resultado = resolverSignin(datos)
             else:
-                resultado = "{\"resultado\":5,\"status\":\"Peticion invalida\"}"
+                resultado = {"resultado": 5, "statusCode": "Peticion invalida"}
     elif size > 3:
-        resultado = "{\"resultado\":3,\"status\":\"Demasiados argumentos\"}"
+        resultado = {"resultado": 3, "statusCode": "Demasiados argumentos"}
     else:
-        resultado = "{\"resultado\":4,\"status\":\"Faltan argumentos\"}"
+        resultado = {"resultado": 4, "statusCode": "Faltan argumentos"}
     return resultado
 
 
 def lambda_handler(event, context):
-    datos = event.get("query")
-    if datos is None:
-        resultado = "{\"resultado\":0,\"status\":\"No hay query\"}"
+    if event is None:
+        resultado = {"resultado": "0", "statusCode": "No hay query"}
     elif conector.isIniciado() is False:
-        resultado = "{\"resultado\":1,\"status\":\"Conecxion a la db no correcta\"}"
+        resultado = {"resultado": 1, "statusCode": "Conecxion a la db no correcta"}
     else:
-        resultado = resolverSolicitud(datos)
+        resultado = resolverSolicitud(event)
     return resultado
 
 
-dicc: dict = {"username": "Pato", "password": "Pato", "peticion": "login"}
-print(lambda_handler({"query": dicc}, None))
+dicc: dict = {"username": "Pato", "password": "Pato", "peticion": "signin"}
+print(lambda_handler(dicc, None))
 
 """
 0: No hay query
@@ -142,7 +152,7 @@ print(lambda_handler({"query": dicc}, None))
 3: Demasiados argumentos
 4: Faltan argumentos
 5: Peticion invalida
-6: username null-
+6: username null
 7: password null
 
 69: OK
