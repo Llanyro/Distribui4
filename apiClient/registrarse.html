@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <meta charset="ISO-8859-1">
+        <title>Registrarse</title>
+    </head>
+    <body>
+        <h3>Registrarse</h3>
+        Username:<input type="text" name="username"/><br/><br/>
+        Password:<input type="password" name="password"/><br/><br/>
+        <input type="button" onclick="enviar('signin')" value="Registrarse"/>
+        <input type="button" value="Logearse con cuenta existente"
+            onclick="window.location.href='/apiClient/index.html'"/>
+        <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+        <script type="text/javascript" src="lib/url-template/url-template.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+        <script type="text/javascript" src="apigClient.js"></script>
+        <script type="text/javascript" src="func.js"></script>
+    </body>
+</html>
