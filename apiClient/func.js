@@ -1,6 +1,6 @@
 var credentials = {
-    accessKey: "ASIAVY64N4P5OEQTKSZM",
-    secretKey: "V7CYN2YSyCB9xyQynJoRacJk8WTTkJA70OU7lD6M",
+    accessKey: "ASIAVY64N4P5MXJ7N6NN",
+    secretKey: "qlY0cntEdoAYoB25ILL029kSeiUhCLto3xTgdkAp",
     region: "us-east-1"
 };
 var apigClient = apigClientFactory.newClient(credentials);
