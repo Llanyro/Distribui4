@@ -73,7 +73,7 @@ function signIn() {
                         window.location.href='/apiClient/index.html'
                     }
                     else {
-                        alert("El usuario ya existe en la base de datos");
+                        alert("El usuario o el correo ya existen en la base de datos");
                     }
                 }
                 else {
@@ -96,7 +96,7 @@ function recuperar(){
         respuesta = ""
     };
     var body = {
-        peticion: "recuperar",
+        peticion: "recupPass",
         username: document.getElementsByName("username")[0].value,
         correo: document.getElementsByName("correo")[0].value,
         pregunta: document.getElementById("mySelect").options[document.getElementById("mySelect").selectedIndex].value,
@@ -110,7 +110,8 @@ function recuperar(){
                 let code = result.data.resultado;
                 if (code === 69) {
                     if(result.data.accesoConcedido === "True"){
-                        window.location.href='/apiClient/index.html'
+                        alert(result.data.color);
+                        window.location.href='/apiClient/index.html';
                     }
                     else {
                         alert("Los datos proporcionados no son correctos");
@@ -127,69 +128,97 @@ function recuperar(){
     catch(e) {console.log(e);}
 }
 
-function recibirMatriz(objmatriz, nombrematriz) {
-    let matriz = undefined;
-    temp = objmatriz.value.split(" ");
-    if (temp.length < 16)
-        alert("No hay suficientes elmentos en la matriz " + nombrematriz)
-    else if(temp.length > 16)
-        alert("Demasiados elmentos en la matriz " + nombrematriz)
-    else {
-        matriz = [];
-        let newlist = [];
-        for (let i = 0; i < temp.length; i++) {
-            newlist.push(parseInt(temp[i]));
-            if(i % 4 == 3){
-                matriz.push(newlist);
-                newlist = [];
-            }
-        }
-        matriz1completada = true;
-    }
-    return matriz;
-}
-
-//1 2 3 4 5 6 7 8 9 0 11 12 13 14 15 16
-function multiplicarMatrices() {
-    alert(1);
-    let matrizlist = document.getElementsByName("matriz");
-    let objMatriz1 = matrizlist[0];
-    let objMatriz2 = matrizlist[1];
-
-    let matriz1res = recibirMatriz(objMatriz1, "1");
-    let matriz2res = recibirMatriz(objMatriz2, "2");
-
-    if(matriz1res !== undefined && matriz2res !== undefined){
-        var params = {
-            peticion: "",
-            matriz1: "",
-            matriz2: ""
-        };
-        var body = {
-            peticion: "matriz4x4",
-            matriz1: matriz1res,
-            matriz2: matriz2res
-        };
-        var additionalParams = {};
-        
-        try {
-            apigClient.rootPost(params, body, additionalParams)
-                .then(function(result) {
-                    let code = result.data.resultado;
-                    if (code === 69)
-                        alert(result.data.result);
-                    else
-                        console.log(result);
-                }).catch( function(result) {
+function getPerfil() {
+    var params = {
+        peticion: "",
+        cookie: ""
+    };
+    var body = {
+        peticion: "getPerfil",
+        cookie: document.cookie
+    };
+    var additionalParams = {};
+    try {
+        apigClient.rootPost(params, body, additionalParams)
+            .then(function(result) {
+                let code = result.data.resultado;
+                if (code === 69) {
+                    let perfil = result.data.perfil;
+                    document.getElementById("nombre") = perfil.nombre;
+                    document.getElementById("apellidos") = perfil.apellidos;
+                    document.getElementById("pregunta") = perfil.pregunta;
+                    document.getElementById("respuesta") = perfil.respuesta;
+                    document.getElementById("correo") = perfil.correo;
+                    document.getElementById("usuario") = perfil.usuario;
+                }
+                else {
                     console.log("Algo ha petado");
                     console.log(result);
-                });
-        }
-        catch(e) {
-            console.log("Algo ha petado");
-            console.log(e);
-        }
+                }
+            }).catch( function(result) {
+                console.log(result);
+            });
     }
+    catch(e) {console.log(e);}
 }
 
+function cambiarPass() {
+    var params = {
+        peticion: "",
+        cookie: "",
+        password: "",
+        newPassword: ""
+    };
+    var body = {
+        peticion: "getPerfil",
+        cookie: document.cookie
+    };
+    var additionalParams = {};
+    try {
+        apigClient.rootPost(params, body, additionalParams)
+            .then(function(result) {
+                let code = result.data.resultado;
+                if (code === 69) {
+                    let perfil = result.data.perfil;
+                    
+                }
+                else {
+                    console.log("Algo ha petado");
+                    console.log(result);
+                }
+            }).catch( function(result) {
+                console.log(result);
+            });
+    }
+    catch(e) {console.log(e);}
+}
 
+function logout() {
+    alert("siii")
+    var params = {
+        peticion: "",
+        cookie: ""
+    };
+    var body = {
+        peticion: "getPerfil",
+        cookie: document.cookie
+    };
+    var additionalParams = {};
+    try {
+        apigClient.rootPost(params, body, additionalParams)
+            .then(function(result) {
+                let code = result.data.resultado;
+                if (code === 69) {
+                    let perfil = result.data.perfil;
+                    
+                }
+                else {
+                    console.log("Algo ha petado");
+                    console.log(result);
+                }
+            }).catch( function(result) {
+                console.log(result);
+            });
+    }
+    catch(e) {console.log(e);}
+}
