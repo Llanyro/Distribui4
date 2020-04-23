@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.7.29, for Linux (x86_64)
+-- MySQL dump 10.17  Distrib 10.3.22-MariaDB, for debian-linux-gnu (x86_64)
 
 --
 
@@ -6,7 +6,7 @@
 
 -- ------------------------------------------------------
 
--- Server version	5.7.29-0ubuntu0.18.04.1
+-- Server version	10.3.22-MariaDB-0+deb10u1
 
 
 
@@ -16,7 +16,7 @@
 
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 
@@ -60,7 +60,7 @@ CREATE TABLE `COMENTARIO` (
 
   CONSTRAINT `FK_ruta` FOREIGN KEY (`ruta`) REFERENCES `VIDEO` (`ruta`),
 
-  CONSTRAINT `FK_usuario_` FOREIGN KEY (`usuario`) REFERENCES `USUARIO` (`usuario`)
+  CONSTRAINT `FK_usuario_` FOREIGN KEY (`usuario`) REFERENCES `USUARIO` (`usuario`) ON DELETE CASCADE ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -81,6 +81,60 @@ LOCK TABLES `COMENTARIO` WRITE;
 /*!40000 ALTER TABLE `COMENTARIO` DISABLE KEYS */;
 
 /*!40000 ALTER TABLE `COMENTARIO` ENABLE KEYS */;
+
+UNLOCK TABLES;
+
+
+
+--
+
+-- Table structure for table `COOKIE`
+
+--
+
+
+
+DROP TABLE IF EXISTS `COOKIE`;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+
+/*!40101 SET character_set_client = utf8 */;
+
+CREATE TABLE `COOKIE` (
+
+  `cookie` varchar(250) NOT NULL,
+
+  `usuario` varchar(20) NOT NULL,
+
+  PRIMARY KEY (`cookie`),
+
+  UNIQUE KEY `cookie` (`cookie`),
+
+  UNIQUE KEY `usuario` (`usuario`),
+
+  CONSTRAINT `FK_usuar2io` FOREIGN KEY (`usuario`) REFERENCES `USUARIO` (`usuario`) ON DELETE CASCADE ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+
+--
+
+-- Dumping data for table `COOKIE`
+
+--
+
+
+
+LOCK TABLES `COOKIE` WRITE;
+
+/*!40000 ALTER TABLE `COOKIE` DISABLE KEYS */;
+
+INSERT INTO `COOKIE` VALUES ('81f978e9-d793-474f-b8da-aba550bb573d','Pato');
+
+/*!40000 ALTER TABLE `COOKIE` ENABLE KEYS */;
 
 UNLOCK TABLES;
 
@@ -112,9 +166,11 @@ CREATE TABLE `USUARIO` (
 
   `password` varchar(257) NOT NULL,
 
-  `color` varchar(15) NOT NULL,
+  `pregunta` varchar(45) NOT NULL,
 
-  `intento` tinyint(1) DEFAULT '0',
+  `respuesta` varchar(25) NOT NULL,
+
+  `intento` tinyint(1) DEFAULT 0,
 
   PRIMARY KEY (`usuario`),
 
@@ -140,7 +196,7 @@ LOCK TABLES `USUARIO` WRITE;
 
 /*!40000 ALTER TABLE `USUARIO` DISABLE KEYS */;
 
-INSERT INTO `USUARIO` VALUES ('Pato','Pato','Pato','Pato','c84f13b8cb9cbcda1ee1b7703db954f57ae07835b8421fd00c46fc407f2ddcef','Red',0),('Pato2','Pato2','Pato2','Pato2','c84f13b8cb9cbcda1ee1b7703db954f57ae07835b8421fd00c46fc407f2ddcef','Red',0);
+INSERT INTO `USUARIO` VALUES ('Pato','Pato','Pato','Pato@Pato.pato','c84f13b8cb9cbcda1ee1b7703db954f57ae07835b8421fd00c46fc407f2ddcef','Red','Red',0);
 
 /*!40000 ALTER TABLE `USUARIO` ENABLE KEYS */;
 
@@ -174,6 +230,8 @@ CREATE TABLE `VIDEO` (
 
   `ruta` varchar(800) NOT NULL,
 
+  `estado` varchar(30) default 'privado',
+
   `fecha` date NOT NULL,
 
   PRIMARY KEY (`usuarioVideo`,`nombreVideo`),
@@ -182,7 +240,7 @@ CREATE TABLE `VIDEO` (
 
   UNIQUE KEY `ruta_2` (`ruta`),
 
-  CONSTRAINT `FK_usuario` FOREIGN KEY (`usuarioVideo`) REFERENCES `USUARIO` (`usuario`)
+  CONSTRAINT `FK_usuario` FOREIGN KEY (`usuarioVideo`) REFERENCES `USUARIO` (`usuario`) ON DELETE CASCADE ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -201,8 +259,6 @@ CREATE TABLE `VIDEO` (
 LOCK TABLES `VIDEO` WRITE;
 
 /*!40000 ALTER TABLE `VIDEO` DISABLE KEYS */;
-
-INSERT INTO `VIDEO` VALUES ('Pato','Video de Pato','#Tusmuertos','34234','rutaesa','2019-09-12'),('Pato','Video de Pato2','#Tusmuertos','34234','rutaesa2','2019-09-12'),('Pato','Video del Pato','#Tusmuertos','34234','rutaesa3','2019-09-12');
 
 /*!40000 ALTER TABLE `VIDEO` ENABLE KEYS */;
 
@@ -236,9 +292,9 @@ CREATE TABLE `VOTO` (
 
   KEY `FK_ruta2` (`ruta`),
 
-  CONSTRAINT `FK_ruta2` FOREIGN KEY (`ruta`) REFERENCES `VIDEO` (`ruta`),
+  CONSTRAINT `FK_ruta2` FOREIGN KEY (`ruta`) REFERENCES `VIDEO` (`ruta`) ON DELETE CASCADE ON UPDATE CASCADE,
 
-  CONSTRAINT `FK_usuario2` FOREIGN KEY (`usuario`) REFERENCES `USUARIO` (`usuario`)
+  CONSTRAINT `FK_usuario2` FOREIGN KEY (`usuario`) REFERENCES `USUARIO` (`usuario`) ON DELETE CASCADE ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -257,8 +313,6 @@ CREATE TABLE `VOTO` (
 LOCK TABLES `VOTO` WRITE;
 
 /*!40000 ALTER TABLE `VOTO` DISABLE KEYS */;
-
-INSERT INTO `VOTO` VALUES ('Pato2','rutaesa',1),('Pato2','rutaesa2',0);
 
 /*!40000 ALTER TABLE `VOTO` ENABLE KEYS */;
 
@@ -284,4 +338,4 @@ UNLOCK TABLES;
 
 
 
--- Dump completed on 2020-04-21 17:06:05
+-- Dump completed on 2020-04-23 20:45:47
