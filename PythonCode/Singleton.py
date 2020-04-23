@@ -27,3 +27,17 @@ def variableCorrectaInt(var: int):
     else:
         resultado = True
     return resultado
+
+
+def variableCorrectaList(var: list):
+    if var is None:
+        resultado = False
+    elif var.__len__() == 0:
+        resultado = False
+    else:
+        resultado = True
+        for i in var:
+            resultado = variableCorrecta(i)
+            if resultado is False:
+                break
+    return resultado

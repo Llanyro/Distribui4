@@ -2,82 +2,31 @@ import sys
 import hashlib
 from Singleton import Singleton, variableCorrecta
 import pymysql
+#import boto3
+from enum import Enum
 
 
-class DBObject:
-    __metaclass__ = Singleton
-    connector = None
-    __host: str = "52.55.253.67"
-    __user: str = "monty"
-    __passwd: str = "some_pass"
-    __dbname: str = "serv"
-    __iniciado: bool = False
-
-    def __init__(self):
-        try:
-            self.connector = pymysql.connect(host=self.__host, port=3306, user=self.__user, passwd=self.__passwd, db=self.__dbname, connect_timeout=2)
-            self.__iniciado = True
-        except pymysql.MySQLError as e:
-            self.__iniciado = False
-            print(e)
-
-    def login(self, username: str, passwd: str):
-        if variableCorrecta(username) is False or variableCorrecta(passwd) is False:
-            resultado = False
-        else:
-            try:
-                with self.connector.cursor() as cursor:
-                    pss = hashlib.sha3_256(passwd.encode()).hexdigest()
-                    command = "SELECT * FROM USERS where username='" + username + "' and password='" + pss + "'"
-                    print(command)
-                    cursor.execute(command)
-                    if cursor.rowcount == 1:
-                        resultado = True
-                    elif cursor.rowcount == 0:
-                        resultado = False
-                    else:
-                        sys.exit()
-            except pymysql.MySQLError as e:
-                print(e)
-                resultado = False
-        return resultado
-
-    def singin(self, username: str, passwd: str):
-        if variableCorrecta(username) is False or variableCorrecta(passwd) is False:
-            resultado = False
-        else:
-            try:
-                with self.connector.cursor() as cursor:
-                    pss = hashlib.sha3_256(passwd.encode()).hexdigest()
-                    command = "insert into USERS values ( '" + username + "' , '" + pss + "' )"
-                    print(command)
-                    cursor.execute(command)
-                    self.connector.commit()
-                    resultado = True
-            except pymysql.MySQLError as e:
-                print(e)
-                resultado = False
-        return resultado
-
-    def showUsers(self):
-        usuarios: list = []
-        cur = self.connector.cursor()
-        cur.execute("select * from USERS")
-        for row in cur:
-            usuarios.append(row[0])
-        return usuarios
-
-    def isIniciado(self):
-        return self.__iniciado
+class EnumType(Enum):
+    Public = 1
+    Private = 2
+    EnlaceOnly = 3
 
 
-conector = DBObject()
+class BucketObject:
+    __bucketname: str = 'distribui4'
+    __s3 = None  # boto3.resource("s3")
+
+    def __init__(self, bucketname: str):
+        self.__bucketname = bucketname
+
+    def saveFile(self, path: str, content, ):
+        return None
 
 
 # """
 # {
 #   "peticion": "login",
-#   "username": "Pato",
+#   "usuario": "Pato",
 #   "password": "Pato"
 # }
 # """
@@ -96,8 +45,12 @@ def resolverLogin(datos: dict):
 # """
 # {
 #   "peticion": "signin",
-#   "username": "Pato",
-#   "password": "Pato"
+#   "nombre": "Pato",
+#   "apellido": "",
+#   "usuario": "Pato",
+#   "correo": "Pato@Pato.pato",
+#   "password": "Pato",
+#   "color": "Red"
 # }
 # """
 def resolverSignin(datos: dict):
@@ -148,7 +101,12 @@ def resolverMatriz4x4(datos: dict):
     elif matriz2 is None:
         resultado = {"resultado": 9, "statusCode": "matriz 2 null"}
     else:
-        resultado = {"resultado": 69, "statusCode": "OK", "result": mat_mult(matriz1, matriz2)}
+        matr = mat_mult(matriz1, matriz2)
+        encoded_string = str(matr).encode('utf8')
+        path = 'result.txt'
+        s3 = boto3.resource("s3")
+        s3.Bucket(BUCKET_NAME).put_object(Key=path, Body=encoded_string, ACL="public-read")
+        resultado = {"resultado": 69, "statusCode": "OK", "result": "http://distribui4.s3-website-us-east-1.amazonaws.com/" + path}
     return resultado
 
 
@@ -182,6 +140,21 @@ def lambda_handler(event, context):
     else:
         resultado = resolverSolicitud(event)
     return resultado
+
+
+conector = DBObject("18.234.24.37", True)
+
+print(conector.singin("Pato2", "Pato2", "Pato2", "Pato2", "Pato2", "Red"))
+# print(conector.login("Pato", "Pato2"))
+# print(conector.getIntentos("Pato"))
+# print(conector.setIntentos("Pato", 0))
+# print(conector.getIntentos("Pato"))
+# print(conector.incrementoIntentos("Paa"))
+# print(conector.deleteUsuario("Pato"))
+# print(conector.deleteUsuarioWEB("Pato", "Pato"))
+print(conector.showUsers())
+# print(conector.cambiarpasswd("Pato", "Pato", "Pato2"))
+
 
 
 # dicc: dict = {"username": "Pato", "password": "Pato", "peticion": "login"}
