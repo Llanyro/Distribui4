@@ -24,7 +24,8 @@ function logIn(){
                 let code = result.data.resultado;
                 if (code === 69) {
                     if(result.data.accesoConcedido === "True"){
-                        window.location.href='/apiClient/matriz.html'
+                        window.location.href='/apiClient/perfil.html'
+                        //asignar cookie
                     }
                     else {
                         alert("El usuario no existe o la contraseña es incorrecta");
@@ -70,7 +71,8 @@ function signIn() {
                 let code = result.data.resultado;
                 if (code === 69) {
                     if(result.data.accesoConcedido === "True"){
-                        window.location.href='/apiClient/index.html'
+                        window.location.href='/apiClient/perfil.html'
+                        //asignar cookie
                     }
                     else {
                         alert("El usuario o el correo ya existen en la base de datos");
@@ -163,33 +165,44 @@ function getPerfil() {
 }
 
 function cambiarPass() {
-    var params = {
-        peticion: "",
-        cookie: "",
-        password: "",
-        newPassword: ""
-    };
-    var body = {
-        peticion: "getPerfil",
-        cookie: document.cookie
-    };
-    var additionalParams = {};
-    try {
-        apigClient.rootPost(params, body, additionalParams)
-            .then(function(result) {
-                let code = result.data.resultado;
-                if (code === 69) {
-                    alert("Contraseña actualizada con éxito!");
-                }
-                else {
-                    console.log("Algo ha petado");
+    if (document.getElementById("passwordNueva1") === document.getElementById("passwordNueva2")) {
+        var params = {
+            peticion: "",
+            cookie: "",
+            password: "",
+            newPassword: ""
+        };
+        var body = {
+            peticion: "getPerfil",
+            cookie: document.cookie,
+            password: document.getElementById("passwordActual"),
+            newPassword: document.getElementById("passwordNueva1")
+        };
+        var additionalParams = {};
+        try {
+            apigClient.rootPost(params, body, additionalParams)
+                .then(function(result) {
+                    let code = result.data.resultado;
+                    if (code === 69) {
+                        alert("Contraseña actualizada con éxito!");
+                    }
+                    else {
+                        console.log("Algo ha petado");
+                        console.log(result);
+                    }
+                }).catch( function(result) {
                     console.log(result);
-                }
-            }).catch( function(result) {
-                console.log(result);
-            });
+                });
+        }
+        catch(e) {console.log(e);}
     }
-    catch(e) {console.log(e);}
+
+    else {
+        alert("Las contraseñas no coinciden");
+        location.reload();
+    }
+        
+    
 }
 
 function logout() {
@@ -207,7 +220,7 @@ function logout() {
             .then(function(result) {
                 let code = result.data.resultado;
                 if (code === 69) {
-                    
+                    //borrar cookie y redirigir al index
                 }
                 else {
                     console.log("Algo ha petado");
@@ -218,4 +231,16 @@ function logout() {
             });
     }
     catch(e) {console.log(e);}
+}
+
+function getCookie(key){
+    let coo = "; " + document.cookie;
+    let cookielist = coo.split("; ");
+    let val = [];
+    for(let i = 0; i < cookielist.length; i++){
+        let spl = cookielist[i].split('=');
+        if(spl.length == 2 && spl[0] == key)
+            val.push(spl[1])
+    }
+    return val;
 }
