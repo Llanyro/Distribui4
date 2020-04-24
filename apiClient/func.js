@@ -1,6 +1,6 @@
 var credentials = {
-    accessKey: "ASIAVY64N4P5IL4GJPUX",
-    secretKey: "efoOYQ1qDRquQCkFFvdqwpCormIa7YwUxHpgoygA",
+    accessKey: "ASIAVY64N4P5DQKHMTPV",
+    secretKey: "leva/3zWPMc2VHVMHpPqw9d78rHXzB7YiG1Aceb2",
     region: "us-east-1"
 };
 var apigClient = apigClientFactory.newClient(credentials);
@@ -23,8 +23,8 @@ function logIn(){
             .then(function(result) {
                 let code = result.data.resultado;
                 if (code === 69) {
-                    if(result.data.accesoConcedido === "True"){
-                        document.cookie = setCookie("AWS",result.data.cookie);
+                    if(result.data.accesoConcedido === true){
+                        setCookie("AWS",result.data.cookie);
                         window.location.href='/apiClient/perfil.html'
                     }
                     else {
@@ -48,7 +48,7 @@ function signIn() {
         usuario: "",
         password: "",
         nombre: "",
-        apellidos: "",
+        apellido: "",
         correo: "",
         pregunta: "",
         respuesta: ""
@@ -58,7 +58,7 @@ function signIn() {
         usuario: document.getElementsByName("username")[0].value,
         password: document.getElementsByName("password")[0].value,
         nombre: document.getElementsByName("nombre")[0].value,
-        apellidos: document.getElementsByName("apellidos")[0].value,
+        apellido: document.getElementsByName("apellidos")[0].value,
         correo: document.getElementsByName("correo")[0].value,
         pregunta: document.getElementById("mySelect").options[document.getElementById("mySelect").selectedIndex].value,
         respuesta: document.getElementsByName("respuesta")[0].value
@@ -68,10 +68,11 @@ function signIn() {
     try {
         apigClient.rootPost(params, body, additionalParams)
             .then(function(result) {
+                console.log(result);
                 let code = result.data.resultado;
                 if (code === 69) {
-                    if(result.data.accesoConcedido === "True"){
-                        document.cookie = setCookie("AWS",result.data.cookie);
+                    if(result.data.accesoConcedido === true){
+                        setCookie("AWS",result.data.cookie);
                         window.location.href='/apiClient/perfil.html'
                     }
                     else {
@@ -137,21 +138,22 @@ function getPerfil() {
     };
     var body = {
         peticion: "getPerfil",
-        cookie: document.cookie
+        cookie: getCookie("AWS")[0]
     };
     var additionalParams = {};
     try {
         apigClient.rootPost(params, body, additionalParams)
-            .then(function(result) {
+        .then(function(result) {
                 let code = result.data.resultado;
                 if (code === 69) {
                     let perfil = result.data.perfil;
-                    document.getElementById("nombre") = perfil.nombre;
-                    document.getElementById("apellidos") = perfil.apellidos;
-                    document.getElementById("pregunta") = perfil.pregunta;
-                    document.getElementById("respuesta") = perfil.respuesta;
-                    document.getElementById("correo") = perfil.correo;
-                    document.getElementById("usuario") = perfil.usuario;
+                    console.log(perfil);
+                    document.getElementById("nombre").innerHTML = perfil.nombre;
+                    document.getElementById("apellidos").innerHTML = perfil.apellido;
+                    document.getElementById("pregunta").innerHTML = perfil.pregunta;
+                    document.getElementById("respuesta").innerHTML = perfil.respuesta;
+                    document.getElementById("correo").innerHTML = perfil.correo;
+                    document.getElementById("usuario").innerHTML = perfil.usuario;
                 }
                 else {
                     console.log("Algo ha petado");
@@ -173,8 +175,8 @@ function cambiarPass() {
             newPassword: ""
         };
         var body = {
-            peticion: "getPerfil",
-            cookie: document.cookie,
+            peticion: "cambiarPass",
+            cookie: getCookie("AWS")[0],
             password: document.getElementById("passwordActual"),
             newPassword: document.getElementById("passwordNueva1")
         };
@@ -211,8 +213,8 @@ function logout() {
         cookie: ""
     };
     var body = {
-        peticion: "getPerfil",
-        cookie: document.cookie
+        peticion: "logout",
+        cookie: getCookie("AWS")[0]
     };
     var additionalParams = {};
     try {
@@ -220,8 +222,8 @@ function logout() {
             .then(function(result) {
                 let code = result.data.resultado;
                 if (code === 69) {
-                    document.cookie = deleteCookie("AWS");
-                    window.location.href='/apiClient/perfil.html';
+                    deleteCookie("AWS");
+                    window.location.href='/apiClient/index.html';
                 }
                 else {
                     console.log("Algo ha petado");
@@ -235,31 +237,14 @@ function logout() {
 }
 
 function setCookie(key, newValue) {
-    let cookies = ("; " + document.cookie).split("; ");
-    let newCookieList = "";
-
-    for (let i = 1; i < cookies.length; i++) {
-        let spl = cookies[i].split('=');
-        if(spl.length == 2) {
-            if(spl[0] == key && i == 1)
-                newCookieList += spl[0] + "=" + newValue;
-            else if(spl[0] == key)
-                newCookieList += "; " + spl[0] + "=" + newValue;
-            else if(i == 1)
-                newCookieList += spl[0] + "=" + spl[1];
-            else
-                newCookieList += "; " + spl[0] + "=" + spl[1];
-        }
-    }
-    return newCookieList;
+    document.cookie = key + "=" + newValue + "; expires=Thu, 01 Jan 2050 00:00:00 UTC; path=/;"
 }
 
 function getCookie(key){
-    let coo = "; " + document.cookie;
-    let cookielist = coo.split("; ");
+    let cookies = document.cookie.replace(" ", "").split(";");
     let val = [];
-    for(let i = 0; i < cookielist.length; i++){
-        let spl = cookielist[i].split('=');
+    for(let i = 0; i < cookies.length; i++){
+        let spl = cookies[i].split('=');
         if(spl.length == 2 && spl[0] == key)
             val.push(spl[1]);
     }
@@ -267,17 +252,5 @@ function getCookie(key){
 }
 
 function deleteCookie(key) {
-    let cookies = ("; " + document.cookie).split("; ");
-    let newCookieList = "";
-    for (let i = 1; i < cookies.length; i++) {
-        let spl = cookies[i].split('=');
-        if(spl.length == 2)
-            if (spl[0] != key) {
-                if(i == 1)
-                newCookieList += spl[0] + "=" + spl[1];
-                else
-                    newCookieList += "; " + spl[0] + "=" + spl[1];
-            }
-    }
-    return newCookieList;
+    document.cookie = key + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
 }

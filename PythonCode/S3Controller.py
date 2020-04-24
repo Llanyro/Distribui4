@@ -207,7 +207,7 @@ class ResolutorSolicitudes:
         if variableCorrecta(cookie) is False:
             resultado = {"resultado": 7, "statusCode": "cookie null"}
         else:
-            resultado = {"resultado": 7, "statusCode": self.__ok,
+            resultado = {"resultado": 69, "statusCode": self.__ok,
                          "logout": self.__dbController.deleteCookie(cookie)}
         return resultado
 
