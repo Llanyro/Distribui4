@@ -36,8 +36,11 @@ class ResolutorSolicitudes:
     __ok: str = "OK"
 
     def __init__(self):
-        self.__dbController = ControladorBaseDatos(local)
+        self.__dbController = ControladorBaseDatos("3.80.233.61")
         self.__bucketObject = BucketObject("distribui4")
+
+    def dbconnected(self):
+        return self.__dbController.getIniciadaConexion()
 
     def __getCookie(self, usuario: str):
         repetir = True
@@ -333,7 +336,7 @@ class ResolutorSolicitudes:
         return resultado
 
 
-res = ResolutorSolicitudes()
+# res = ResolutorSolicitudes()
 # print(res.resolverSolicitud({"peticion": "login", "usuario": "Pato", "password": "Pato"}))
 # print(res.resolverSolicitud({"peticion": "signin", "nombre": "Pato2", "apellido": "Pato2", "usuario": "Pato2",
 #                              "correo": "Pato@Pato.pato2", "password": "Pato2",

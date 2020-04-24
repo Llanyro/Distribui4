@@ -1,6 +1,6 @@
 var credentials = {
-    accessKey: "ASIAVY64N4P5MEVIAVYN",
-    secretKey: "ZoMUyi2qJSu13OD+0IDA6TuD64Mcc/xWRGPIRIkJ",
+    accessKey: "ASIAVY64N4P5IL4GJPUX",
+    secretKey: "efoOYQ1qDRquQCkFFvdqwpCormIa7YwUxHpgoygA",
     region: "us-east-1"
 };
 var apigClient = apigClientFactory.newClient(credentials);
@@ -8,12 +8,12 @@ var apigClient = apigClientFactory.newClient(credentials);
 function logIn(){
     var params = {
         peticion: "",
-        username: "",
+        usuario: "",
         password: ""
     };
     var body = {
         peticion: "login",
-        username: document.getElementsByName("username")[0].value,
+        usuario: document.getElementsByName("username")[0].value,
         password: document.getElementsByName("password")[0].value
     };
     var additionalParams = {};
@@ -45,17 +45,17 @@ function logIn(){
 function signIn() {
     var params = {
         peticion: "",
-        username: "",
+        usuario: "",
         password: "",
-        nombre = "",
-        apellidos = "",
-        correo = "",
-        pregunta = "",
-        respuesta = ""
+        nombre: "",
+        apellidos: "",
+        correo: "",
+        pregunta: "",
+        respuesta: ""
     };
     var body = {
         peticion: "signin",
-        username: document.getElementsByName("username")[0].value,
+        usuario: document.getElementsByName("username")[0].value,
         password: document.getElementsByName("password")[0].value,
         nombre: document.getElementsByName("nombre")[0].value,
         apellidos: document.getElementsByName("apellidos")[0].value,
@@ -92,14 +92,14 @@ function signIn() {
 function recuperar(){
     var params = {
         peticion: "",
-        username: "",
-        correo = "",
-        pregunta = "",
-        respuesta = ""
+        usuario: "",
+        correo: "",
+        pregunta: "",
+        respuesta: ""
     };
     var body = {
         peticion: "recupPass",
-        username: document.getElementsByName("username")[0].value,
+        usuario: document.getElementsByName("username")[0].value,
         correo: document.getElementsByName("correo")[0].value,
         pregunta: document.getElementById("mySelect").options[document.getElementById("mySelect").selectedIndex].value,
         respuesta: document.getElementsByName("respuesta")[0].value

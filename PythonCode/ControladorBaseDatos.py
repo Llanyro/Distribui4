@@ -376,7 +376,7 @@ class ControladorBaseDatos(BaseDatos):
 local = "192.168.0.107"
 juinja = "192.168.1.41"
 
-controlador = ControladorBaseDatos(local)
+# controlador = ControladorBaseDatos(juinja)
 # print(controlador.getRespuestaValida("Pata", "Rojo"))
 # print(controlador.deleteUsuarioWEB("PaTo4", "Password1"))
 # print(controlador.deleteUsuario("Pato"))
@@ -384,8 +384,8 @@ controlador = ControladorBaseDatos(local)
 # print(controlador.incrementarIntentos("Pato"))
 # print(controlador.setIntentos("Pato", 10))
 # print(controlador.singin("Pato", "Pato", "Pato", "aaa", "Password1", "Rojo"))
-print(controlador.showUsers())
-print(controlador.showCookies())
+# print(controlador.showUsers())
+# print(controlador.showCookies())
 # impVideos(controlador.getVideos("Pato"))
 # print(controlador.getPerfil("Pato2"))
 # print(controlador.login("Pato4", "Password1"))
