@@ -179,8 +179,7 @@ function cambiarPass() {
             .then(function(result) {
                 let code = result.data.resultado;
                 if (code === 69) {
-                    let perfil = result.data.perfil;
-                    
+                    alert("Contraseña actualizada con éxito!");
                 }
                 else {
                     console.log("Algo ha petado");
@@ -194,7 +193,6 @@ function cambiarPass() {
 }
 
 function logout() {
-    alert("siii")
     var params = {
         peticion: "",
         cookie: ""
@@ -209,7 +207,6 @@ function logout() {
             .then(function(result) {
                 let code = result.data.resultado;
                 if (code === 69) {
-                    let perfil = result.data.perfil;
                     
                 }
                 else {
