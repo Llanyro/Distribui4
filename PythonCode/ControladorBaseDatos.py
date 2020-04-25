@@ -230,7 +230,7 @@ class ControladorBaseDatos(BaseDatos):
     # region Videos
     # Sube un video a la DB, si visualizacion es un valor null o 0 se guarda como private
     def subirVideo(self, usuariovideo: str, nombrevideo: str, etiquetas: str, size: str, ruta: str, visualizacion: str):
-        if variableCorrectaList([usuariovideo, nombrevideo, etiquetas, size, ruta]) is False:
+        if variableCorrectaList([usuariovideo, nombrevideo, etiquetas, ruta]) is False and size != 0:
             resultado = False
         else:
             command = "insert into " + self.__tablaVideos + " values ( " \

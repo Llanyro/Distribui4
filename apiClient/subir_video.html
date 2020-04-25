@@ -52,16 +52,15 @@
                         </div>
 
                         <div class="input-group form-group">
-                            <input type="text" class="form-control" placeholder="Nombre del vídeo" name="nombre">
+                            <input type="text" class="form-control" placeholder="Nombre del vídeo" id="nombre" required>
                         </div>
 
                         <div class="input-group form-group">
-                            <input type="text" class="form-control" placeholder="Etiquetas del vídeo" name="etiquetas">
+                            <input type="text" class="form-control" placeholder="Etiquetas del vídeo" id="etiquetas" required>
                         </div>
                         
-                        <select class="mdb-select md-form" multiple id="mySelect">
-                            <option value="" disabled selected>Estado del vídeo</option>
-                            <option value="private">Privado</option>
+                        <select class="mdb-select md-form" id="mySelect" required>
+                            <option value="private" selected>Privado</option>
                             <option value="public-read">Publico</option>
                           </select>
         

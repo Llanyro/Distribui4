@@ -27,12 +27,11 @@ function signIn() {
                 let code = result.data.resultado;
                 if (code === 69) {
                     if(result.data.accesoConcedido === true){
-                        setCookie("AWS",result.data.cookie);
-                        window.location.href='/apiClient/perfil.html'
+                        setCookie("AWS", result.data.cookie);
+                        window.location.href='./apiClient/perfil.html';
                     }
-                    else {
+                    else
                         alert("El usuario o el correo ya existen en la base de datos");
-                    }
                 }
                 else {
                     console.log("Algo ha petado");

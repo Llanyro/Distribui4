@@ -22,11 +22,10 @@ function recuperar(){
                 if (code === 69) {
                     if(result.data.accesoConcedido === "True"){
                         alert(result.data.color);
-                        window.location.href='/apiClient/index.html';
+                        window.location.href='./apiClient/index.html';
                     }
-                    else {
+                    else
                         alert("Los datos proporcionados no son correctos");
-                    }
                 }
                 else {
                     console.log("Algo ha petado");

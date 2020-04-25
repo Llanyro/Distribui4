@@ -14,7 +14,7 @@ function logout() {
                 let code = result.data.resultado;
                 if (code === 69) {
                     deleteCookie("AWS");
-                    window.location.href='/apiClient/index.html';
+                    window.location.href='./index.html';
                 }
                 else {
                     console.log("Algo ha petado");

@@ -218,15 +218,14 @@ class ResolutorSolicitudes:
     #     "cookie": "81f978e9-d793-474f-b8da-aba550bb573d",
     #     "nombrevideo": "Video de Pato",
     #     "etiquetas": "tuputamadre.jpg#hashtag",
-    #     "size": "0",
-    #     "ruta": "ruta"
-    #     "visualizacion": "public"
+    #     "visualizacion": "public",
+    #     "filecontent": "asdf"
     # }
     def __resolverSubirVideo(self, datos: dict):
         cookie = datos.get("cookie")
         nombrevideo = datos.get("nombreVideo")
         etiquetas = datos.get("etiquetas")
-        size = datos.get("size")
+        filecontent = datos.get("filecontent")
         visualizacion = datos.get("visualizacion")
         if variableCorrecta(cookie) is False:
             resultado = {"resultado": 7, "statusCode": "cookie null"}
@@ -234,8 +233,8 @@ class ResolutorSolicitudes:
             resultado = {"resultado": 7, "statusCode": "nombreVideo null"}
         elif variableCorrecta(etiquetas) is False:
             resultado = {"resultado": 7, "statusCode": "etiquetas null"}
-        elif variableCorrecta(size) is False:
-            resultado = {"resultado": 7, "statusCode": "size null"}
+        elif variableCorrecta(filecontent) is False:
+            resultado = {"resultado": 7, "statusCode": "filecontent null"}
         else:
             usuariovideo = self.__dbController.getUsername(cookie)
             if usuariovideo is None:
@@ -244,7 +243,10 @@ class ResolutorSolicitudes:
                 ruta = usuariovideo + "/" + nombrevideo
                 if visualizacion is None:
                     visualizacion = EnumType.Private.value
-                result = self.__dbController.subirVideo(usuariovideo, nombrevideo, etiquetas, size, ruta, visualizacion)
+                result = self.__dbController.subirVideo(usuariovideo, nombrevideo, etiquetas, filecontent.__len__(),
+                                                        ruta, visualizacion)
+                if result is True:
+                    self.__bucketObject.saveFile(ruta, filecontent, EnumType.Public)
                 resultado = {"resultado": 69, "statusCode": self.__ok, "filesubido": result}
         return resultado
 
