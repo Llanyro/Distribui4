@@ -35,9 +35,9 @@ class ResolutorSolicitudes:
     __cookieInvalida: str = "cookie invalida"
     __ok: str = "OK"
 
-    def __init__(self):
-        self.__dbController = ControladorBaseDatos("3.80.233.61")
-        self.__bucketObject = BucketObject("distribui4")
+    def __init__(self, host: str, bucket: str):
+        self.__dbController = ControladorBaseDatos(host)
+        self.__bucketObject = BucketObject(bucket)
 
     def dbconnected(self):
         return self.__dbController.getIniciadaConexion()

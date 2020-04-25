@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title> Subir archivo.png </title>
+    </head>
+    <body id="dropbox" type="file">
+        <div class="card-body">
+            <input id="upload" type="file"/>
+            <div class="form-group">
+                <input type="button" class="btn btn-outline-dark float-right login_btn" onclick="subir()" value="Subir"/>
+            </div>
+        </div>
+        <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+        <script type="text/javascript" src="lib/url-template/url-template.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+        <script type="text/javascript" src="apigClient.js"></script>
+        <script type="text/javascript" src="func.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script>
+            var dropbox;
+            dropbox = document.getElementById("dropbox");
+            dropbox.addEventListener("dragenter", fun1, false);
+            dropbox.addEventListener("dragover", fun1, false);
+            dropbox.addEventListener("drop", drop, false);
+            function fun1(e) { e.stopPropagation(); e.preventDefault(); }
+            function drop(e) {
+                fun1(e);
+                var files = e.dataTransfer.files;
+
+                if (files.length === 0) {
+                    console.log('No file is selected');
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    console.log('File content:', event.target.result);
+                };
+                reader.readAsText(files[0]);
+            }
+        </script>
+                <script>
+                    document.getElementById('upload').addEventListener('change', readFileAsString)
+                    function readFileAsString() {
+                        var files = this.files;
+                        if (files.length === 0) {
+                            console.log('No file is selected');
+                            return;
+                        }
+        
+                        var reader = new FileReader();
+                        reader.onload = function(event) {
+                            console.log('File content:', event.target.result);
+                        };
+                        reader.readAsText(files[0]);
+                    }
+                </script>
+    </body>
+</html>

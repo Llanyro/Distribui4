@@ -6,7 +6,7 @@
         <link rel="stylesheet" type="text/css" href="styles.css">
         <title>Subir vídeo</title>
     </head>
-    <body onload="getPerfil()">
+    <body id="dropbox">
         <nav class="navbar navbar-expand-sm">
             <ul class="nav nav-pills nav-fill">
                 <div class="input-group">
@@ -33,7 +33,6 @@
             </ul>
         </nav>
 
-
         <div class="container">
             <div class="d-flex justify-content-center">
                 <div class="card">
@@ -48,7 +47,7 @@
                             <div class="custom-file">
                               <input type="file" class="custom-file-input" id="inputGroupFile01"
                                 aria-describedby="inputGroupFileAddon01">
-                              <label class="custom-file-label" for="inputGroupFile01">Escoge el vídeo</label>
+                              <label class="custom-file-label" for="inputGroupFile01" id="filename">Escoge el vídeo</label>
                             </div>
                         </div>
 
@@ -76,8 +75,6 @@
             </div>
         </div>
 
-        
-
         <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
         <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
         <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
@@ -89,9 +86,11 @@
         <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
         <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
         <script type="text/javascript" src="apigClient.js"></script>
-        <script type="text/javascript" src="func.js"></script>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="cli.js"></script>
+        <script type="text/javascript" src="cookies.js"></script>
+        <script type="text/javascript" src="subir_video.js"></script>
+        <script type="text/javascript" src="navfunc.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     </body>
 </html>
