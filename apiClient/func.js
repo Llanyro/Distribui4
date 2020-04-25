@@ -202,9 +202,7 @@ function cambiarPass() {
     else {
         alert("Las contraseñas no coinciden");
         location.reload();
-    }
-        
-    
+    }   
 }
 
 function logout() {
@@ -253,4 +251,46 @@ function getCookie(key){
 
 function deleteCookie(key) {
     document.cookie = key + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+}
+
+
+function subirVideo() {
+    if (document.getElementById("passwordNueva1") === document.getElementById("passwordNueva2")) {
+        var params = {
+            peticion: "",
+            cookie: "",
+            nombre: "",
+            etiquetas: "",
+            estado: ""
+        };
+        var body = {
+            peticion: "cambiarPass",
+            cookie: getCookie("AWS")[0],
+            nombre: document.getElementById("nombre"),
+            etiquetas: document.getElementById("etiquetas"),
+            estado: document.getElementById("mySelect").options[document.getElementById("mySelect").selectedIndex].value,
+        };
+        var additionalParams = {};
+        try {
+            apigClient.rootPost(params, body, additionalParams)
+                .then(function(result) {
+                    let code = result.data.resultado;
+                    if (code === 69) {
+                        alert("Contraseña actualizada con éxito!");
+                    }
+                    else {
+                        console.log("Algo ha petado");
+                        console.log(result);
+                    }
+                }).catch( function(result) {
+                    console.log(result);
+                });
+        }
+        catch(e) {console.log(e);}
+    }
+
+    else {
+        alert("Las contraseñas no coinciden");
+        location.reload();
+    }   
 }

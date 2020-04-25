@@ -4,9 +4,9 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="styles.css">
-        <title>Mis videos</title>
+        <title>Subir vídeo</title>
     </head>
-    <body>
+    <body onload="getPerfil()">
         <nav class="navbar navbar-expand-sm">
             <ul class="nav nav-pills nav-fill">
                 <div class="input-group">
@@ -14,10 +14,10 @@
                         <a class="nav-link" href="./perfil.html">Mi perfil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="./videos_privados.html">Mis videos</a>
+                        <a class="nav-link" href="./videos_privados.html">Mis videos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./subir_video.html">Subir vídeo</a>
+                        <a class="nav-link active" href="./subir_video.html">Subir vídeo</a>
                     </li>
                     <li class="nav-item">
                         <form class="form-inline" onsubmit="">
@@ -33,6 +33,48 @@
             </ul>
         </nav>
 
+
+        <div class="container">
+            <div class="d-flex justify-content-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Subir vídeo</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroupFileAddon01">Subir</span>
+                            </div>
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                aria-describedby="inputGroupFileAddon01">
+                              <label class="custom-file-label" for="inputGroupFile01">Escoge el vídeo</label>
+                            </div>
+                        </div>
+
+                        <div class="input-group form-group">
+                            <input type="text" class="form-control" placeholder="Nombre del vídeo" name="nombre">
+                        </div>
+
+                        <div class="input-group form-group">
+                            <input type="text" class="form-control" placeholder="Etiquetas del vídeo" name="etiquetas">
+                        </div>
+                        
+                        <select class="mdb-select md-form" multiple id="mySelect">
+                            <option value="" disabled selected>Estado del vídeo</option>
+                            <option value="private">Privado</option>
+                            <option value="public-read">Publico</option>
+                          </select>
+        
+
+                        <div class="form-group">
+                            <input type="button" class="btn btn-outline-dark float-right login_btn" onclick="subirVideo()" value="Subir"/>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
 
         
 
