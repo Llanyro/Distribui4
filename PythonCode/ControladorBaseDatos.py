@@ -195,7 +195,7 @@ class ControladorBaseDatos(BaseDatos):
         if variableCorrectaList([usuario, pregunta, correo, respuesta]) is False:
             resultado = -1
         else:
-            command = "select color from " + self.__tablaUsuarios + " where usuario= %(usuario)s " \
+            command = "select * from " + self.__tablaUsuarios + " where usuario= %(usuario)s " \
                                                                    "and pregunta=%(pregunta)s and " \
                                                                    "correo=%(correo)s and respuesta=%(respuesta)s"
             result = self.selectCount(command, {"usuario": usuario, "respuesta": respuesta,

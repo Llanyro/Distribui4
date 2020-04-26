@@ -20,12 +20,8 @@ function recuperar(){
             .then(function(result) {
                 let code = result.data.resultado;
                 if (code === 69) {
-                    if(result.data.accesoConcedido === "True"){
-                        alert(result.data.color);
-                        window.location.href='./apiClient/index.html';
-                    }
-                    else
-                        alert("Los datos proporcionados no son correctos");
+                    alert("Nueva contraseña temporal: " + result.data.color);
+                    window.location.href='./index.html';
                 }
                 else {
                     console.log("Algo ha petado");

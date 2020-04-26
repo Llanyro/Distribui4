@@ -13,10 +13,13 @@ function getFileContent(file) {
     }
     else {
         var reader = new FileReader();
-        reader.onload = function(event) {
-            filecontent = event.target.result;
+        reader.onload = function() {
+            let arrayBuffer = this.result;
+            array = new Uint8Array(arrayBuffer);
+            filecontent = String.fromCharCode.apply(null, array);
+            console.log(filecontent);
         };
-        reader.readAsText(file);
+        reader.readAsArrayBuffer(file);
     }
 }
 function subirVideo() {
@@ -27,16 +30,15 @@ function subirVideo() {
         nombreVideo: "",
         etiquetas: "",
         visualizacion: "",
-        filecontent: "",
+        file: ""
     };
-
     var body = {
         peticion: "subirVideo",
         cookie: getCookie("AWS")[0],
         nombreVideo: document.getElementById("nombre").value,
         etiquetas: document.getElementById("etiquetas").value,
         visualizacion: document.getElementById("mySelect").value,
-        filecontent: filecontent,
+        file: filecontent
     };
     console.log(body);
     var additionalParams = {};
@@ -46,7 +48,7 @@ function subirVideo() {
         document.getElementById("nombre").focus();
         continuar = false;
     }
-    if(body.filecontent === undefined) {
+    if(body.file === undefined) {
         alert("Introduce el video");
         continuar = false;
     }

@@ -28,7 +28,7 @@ function signIn() {
                 if (code === 69) {
                     if(result.data.accesoConcedido === true){
                         setCookie("AWS", result.data.cookie);
-                        window.location.href='./apiClient/perfil.html';
+                        window.location.href='./perfil.html';
                     }
                     else
                         alert("El usuario o el correo ya existen en la base de datos");

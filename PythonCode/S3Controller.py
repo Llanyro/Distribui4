@@ -1,5 +1,4 @@
-# import boto3
-import hashlib
+import boto3
 from Singleton import variableCorrecta
 from ControladorBaseDatos import ControladorBaseDatos, EnumType, impVideos
 import uuid
@@ -10,16 +9,16 @@ juinja = "192.168.1.41"
 
 class BucketObject:
     __bucketname: str = 'distribui4'
-    __s3 = None  # boto3.resource("s3")
+    __s3 = boto3.resource("s3")
     __bucket = None
 
     def __init__(self, bucketname: str):
         self.__bucketname = bucketname
-        # self.__bucket = self.__s3.Bucket(self.__bucketname)
+        self.__bucket = self.__s3.Bucket(self.__bucketname)
 
     def saveFile(self, path: str, content, visualizacion: EnumType):
         encode_content: str = content.encode('utf8')
-        self.__bucket.put_object(Key=path, Body=encode_content, ACL=visualizacion.value)
+        self.__bucket.put_object(Key=(path + ".mp4"), Body=encode_content, ACL=visualizacion.value)
         return None
 
     def deleteFile(self, path: str):
@@ -166,7 +165,7 @@ class ResolutorSolicitudes:
         if variableCorrecta(cookie) is False:
             resultado = {"resultado": 7, "statusCode": "cookie null"}
         elif variableCorrecta(passwd) is False:
-            resultado = {"resultado": 7, "statusCode": "passwd null"}
+            resultado = {"resultado": 7, "statusCode": "password null"}
         elif variableCorrecta(newpass) is False:
             resultado = {"resultado": 7, "statusCode": "newpass null"}
         else:
@@ -219,13 +218,13 @@ class ResolutorSolicitudes:
     #     "nombrevideo": "Video de Pato",
     #     "etiquetas": "tuputamadre.jpg#hashtag",
     #     "visualizacion": "public",
-    #     "filecontent": "asdf"
+    #     "file": "asdf"
     # }
     def __resolverSubirVideo(self, datos: dict):
         cookie = datos.get("cookie")
         nombrevideo = datos.get("nombreVideo")
         etiquetas = datos.get("etiquetas")
-        filecontent = datos.get("filecontent")
+        file = datos.get("file")
         visualizacion = datos.get("visualizacion")
         if variableCorrecta(cookie) is False:
             resultado = {"resultado": 7, "statusCode": "cookie null"}
@@ -233,8 +232,8 @@ class ResolutorSolicitudes:
             resultado = {"resultado": 7, "statusCode": "nombreVideo null"}
         elif variableCorrecta(etiquetas) is False:
             resultado = {"resultado": 7, "statusCode": "etiquetas null"}
-        elif variableCorrecta(filecontent) is False:
-            resultado = {"resultado": 7, "statusCode": "filecontent null"}
+        elif file is None:
+            resultado = {"resultado": 7, "statusCode": "file null"}
         else:
             usuariovideo = self.__dbController.getUsername(cookie)
             if usuariovideo is None:
@@ -243,10 +242,10 @@ class ResolutorSolicitudes:
                 ruta = usuariovideo + "/" + nombrevideo
                 if visualizacion is None:
                     visualizacion = EnumType.Private.value
-                result = self.__dbController.subirVideo(usuariovideo, nombrevideo, etiquetas, filecontent.__len__(),
-                                                        ruta, visualizacion)
+                result = self.__dbController.subirVideo(usuariovideo, nombrevideo,
+                                                        etiquetas, str(file.__len__()), ruta, visualizacion)
                 if result is True:
-                    self.__bucketObject.saveFile(ruta, filecontent, EnumType.Public)
+                    self.__bucketObject.saveFile(ruta, file, EnumType.Public)
                 resultado = {"resultado": 69, "statusCode": self.__ok, "filesubido": result}
         return resultado
 
