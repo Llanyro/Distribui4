@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script>
+
+
+$(document).ready(function(){
+  $("button").click(function(){
+		var vop1=document.getElementById("op1").value;
+		var vop2=document.getElementById("op2").value;
+		var vop =document.getElementById("op").value;
+
+		//alert(op1+' '+op2+' '+op);
+		var vres="";
+		var asd=$.get(
+		    "https://iitbdlqhng.execute-api.eu-west-2.amazonaws.com/calculator/",
+		    {method: "operacion", op1 : vop1, op2 : vop2 , op : vop},
+		    function(data) {
+
+		       alert('page content: ' + JSON.stringify(data));
+		      
+		       document.getElementById("res").innerHTML="Resultado recibido:"+ data.res;
+			$.get(
+			    "https://iitbdlqhng.execute-api.eu-west-2.amazonaws.com/calculator/",
+			    {method: "escritura", res: data.res },
+			    function(data) {
+
+			       alert('page content: ' + JSON.stringify(data));
+			      
+			    }
+			);
+		    }
+		)
+		  .done(function() {
+		    alert( "second success" );
+		  })
+		  .fail(function() {
+		    alert( "error" );
+		  })
+		  .always(function() {
+		    alert( "finished" );
+		  });
+
+		asd.always(function() {
+			  alert( "second finished" );
+		});
+	
+		
+  });
+});
+
+</script>
+
+</head>
+<body>
+
+  <label >Op1:</label>
+  <input type="text" id="op1" name="op1"><br><br>
+  <label >Op2:</label>
+  <input type="text" id="op2" name="op2"><br><br>
+  <label >Operacion:</label>
+  <input type="text" id="op" name="op"><br><br>
+  <label id="res">Resultado: </label><br><br>
+
+
+  <button>Send an HTTP GET request to a page and get the result back</button>
+
+</body>
+</html>

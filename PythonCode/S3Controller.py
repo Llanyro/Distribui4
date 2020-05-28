@@ -1,10 +1,8 @@
 import boto3
-from Singleton import variableCorrecta
+from Singleton import variableCorrecta, variableCorrectaInt
 from ControladorBaseDatos import ControladorBaseDatos, EnumType, impVideos
 import uuid
-
-local = "192.168.0.107"
-juinja = "192.168.1.41"
+import codecs
 
 
 class BucketObject:
@@ -16,14 +14,13 @@ class BucketObject:
         self.__bucketname = bucketname
         self.__bucket = self.__s3.Bucket(self.__bucketname)
 
-    def saveFile(self, path: str, content, visualizacion: EnumType):
-        encode_content: str = content.encode('utf8')
-        self.__bucket.put_object(Key=(path + ".mp4"), Body=encode_content, ACL=visualizacion.value)
+    def deleteFile(self, path: str):
+        self.__s3.Object(self.__bucketname, path + ".mp4").delete()
         return None
 
-    def deleteFile(self, path: str):
-        self.__bucket.deleteObject(Key=path)
-        return None
+    @staticmethod
+    def filepath(usuariovideo: str, filename: str):
+        return usuariovideo + "/" + filename
 
 
 class ResolutorSolicitudes:
@@ -215,38 +212,36 @@ class ResolutorSolicitudes:
     # {
     #     "peticion": "subirVideo",
     #     "cookie": "81f978e9-d793-474f-b8da-aba550bb573d",
-    #     "nombrevideo": "Video de Pato",
+    #     "nombreVideo": "Video de Pato",
     #     "etiquetas": "tuputamadre.jpg#hashtag",
     #     "visualizacion": "public",
-    #     "file": "asdf"
+    #     "size": "0"
     # }
     def __resolverSubirVideo(self, datos: dict):
         cookie = datos.get("cookie")
         nombrevideo = datos.get("nombreVideo")
         etiquetas = datos.get("etiquetas")
-        file = datos.get("file")
         visualizacion = datos.get("visualizacion")
+        size = datos.get("size")
         if variableCorrecta(cookie) is False:
             resultado = {"resultado": 7, "statusCode": "cookie null"}
         elif variableCorrecta(nombrevideo) is False:
             resultado = {"resultado": 7, "statusCode": "nombreVideo null"}
         elif variableCorrecta(etiquetas) is False:
             resultado = {"resultado": 7, "statusCode": "etiquetas null"}
-        elif file is None:
+        elif variableCorrectaInt(size) is None:
             resultado = {"resultado": 7, "statusCode": "file null"}
         else:
             usuariovideo = self.__dbController.getUsername(cookie)
             if usuariovideo is None:
                 resultado = {"resultado": 7, "statusCode": self.__cookieInvalida}
             else:
-                ruta = usuariovideo + "/" + nombrevideo
+                ruta = self.__bucketObject.filepath(usuariovideo, nombrevideo)
                 if visualizacion is None:
                     visualizacion = EnumType.Private.value
                 result = self.__dbController.subirVideo(usuariovideo, nombrevideo,
-                                                        etiquetas, str(file.__len__()), ruta, visualizacion)
-                if result is True:
-                    self.__bucketObject.saveFile(ruta, file, EnumType.Public)
-                resultado = {"resultado": 69, "statusCode": self.__ok, "filesubido": result}
+                                                        etiquetas, str(size), ruta, visualizacion)
+                resultado = {"resultado": 69, "statusCode": self.__ok, "filesubido": result, "name": ruta}
         return resultado
 
     # {
@@ -267,42 +262,127 @@ class ResolutorSolicitudes:
         return resultado
 
     # {
-    #     "peticion": "getVideos",
-    #     "cookie": "81f978e9-d793-474f-b8da-aba550bb573d",
+    #     "peticion": "getVideos"
     # }
     def __resolverGetVideos(self, datos: dict):
-        cookie = datos.get("cookie")
-        if variableCorrecta(cookie) is False:
-            resultado = {"resultado": 7, "statusCode": "cookie null"}
-        else:
-            usuariovideo = self.__dbController.getUsername(cookie)
-            if usuariovideo is None:
-                resultado = {"resultado": 7, "statusCode": self.__cookieInvalida}
-            else:
-                result = self.__dbController.getVideos(usuariovideo)
-                resultado = {"resultado": 69, "statusCode": self.__ok, "listaVideo": result}
-        return resultado
+        result = self.__dbController.getVideos()
+        return {"resultado": 69, "statusCode": self.__ok, "listaVideo": result}
 
     # {
-    #     "peticion": "eliminarVideo",
+    #     "peticion": "nombreVideo",
     #     "cookie": "81f978e9-d793-474f-b8da-aba550bb573d",
     #     "nombrevideo": "Video 0 de pato.mp1"
     # }
     def __resolverEliminarVideo(self, datos: dict):
         cookie = datos.get("cookie")
-        nombrevideo = datos.get("nombrevideo")
+        nombrevideo = datos.get("nombreVideo")
         if variableCorrecta(cookie) is False:
             resultado = {"resultado": 7, "statusCode": "cookie null"}
         elif variableCorrecta(nombrevideo) is False:
-            resultado = {"resultado": 7, "statusCode": "nombrevideo null"}
+            resultado = {"resultado": 7, "statusCode": "nombreVideo null"}
         else:
             usuariovideo = self.__dbController.getUsername(cookie)
             if usuariovideo is None:
                 resultado = {"resultado": 7, "statusCode": self.__cookieInvalida}
             else:
                 result = self.__dbController.deleteVideo(usuariovideo, nombrevideo)
+                if result:
+                    self.__bucketObject.deleteFile(self.__bucketObject.filepath(usuariovideo, nombrevideo))
                 resultado = {"resultado": 69, "statusCode": self.__ok, "fileEliminado": result}
         return resultado
+
+    # {
+    #     "peticion": "getVideosLike",
+    #     "like": "asdf"
+    # }
+    def __resolverGetVideosLike(self, datos: dict):
+        like = datos.get("like")
+        if variableCorrecta(like) is False:
+            like = ""
+        result = self.__dbController.getVideosLike(like)
+        resultado = {"resultado": 69, "statusCode": self.__ok, "listaVideo": result}
+        return resultado
+
+    # endregion
+    # region Votos
+    # {
+    #     "peticion": "voto",
+    #     "cookie": "81f978e9-d793-474f-b8da-aba550bb573d",
+    #     "ruta": "Fian/asdf",
+    #     "decision": 0
+    # }
+    def __resolverVoto(self, datos: dict):
+        cookie = datos.get("cookie")
+        ruta = datos.get("ruta")
+        decision = datos.get("decision")
+        if variableCorrecta(cookie) is False:
+            resultado = {"resultado": 7, "statusCode": "cookie null"}
+        elif variableCorrecta(ruta) is False:
+            resultado = {"resultado": 7, "statusCode": "ruta null"}
+        elif variableCorrectaInt(decision) is False:
+            resultado = {"resultado": 7, "statusCode": "decision null"}
+        else:
+            usuario = self.__dbController.getUsername(cookie)
+            if usuario is None:
+                resultado = {"resultado": 7, "statusCode": self.__cookieInvalida}
+            else:
+                result = self.__dbController.insertarVoto(ruta, usuario, decision)
+                resultado = {"resultado": 69, "statusCode": self.__ok, "votoRealizado": result}
+        return resultado
+
+    # {
+    #     "peticion": "verVotos",
+    #     "ruta": "Fian/asdf"
+    # }
+    def __resolverVerVotos(self, datos: dict):
+        ruta = datos.get("ruta")
+        if variableCorrecta(ruta) is False:
+            resultado = {"resultado": 7, "statusCode": "ruta null"}
+        else:
+            result = self.__dbController.verVotosVideo(ruta)
+            resultado = {"resultado": 69, "statusCode": self.__ok, "votos": result}
+        return resultado
+
+    # endregion
+    # region Comentarios
+    # {
+    #     "peticion": "addComentario",
+    #     "cookie": "81f978e9-d793-474f-b8da-aba550bb573d",
+    #     "ruta": "Fian/asdf",
+    #     "comentario": "asdf"
+    # }
+    def __resolverAddComentario(self, datos: dict):
+        cookie = datos.get("cookie")
+        ruta = datos.get("ruta")
+        comentario = datos.get("comentario")
+        if variableCorrecta(cookie) is False:
+            resultado = {"resultado": 7, "statusCode": "cookie null"}
+        elif variableCorrecta(ruta) is False:
+            resultado = {"resultado": 7, "statusCode": "ruta null"}
+        elif variableCorrecta(comentario) is False:
+            resultado = {"resultado": 7, "statusCode": "comentario null"}
+        else:
+            usuario = self.__dbController.getUsername(cookie)
+            if usuario is None:
+                resultado = {"resultado": 7, "statusCode": self.__cookieInvalida}
+            else:
+                result = self.__dbController.addComentario(ruta, usuario, comentario)
+                resultado = {"resultado": 69, "statusCode": self.__ok, "comentarioRealizado": result}
+        return resultado
+
+    # {
+    #     "peticion": "getComentarios",
+    #     "ruta": "Fian/asdf"
+    # }
+    def __resolverGetComentarios(self, datos: dict):
+        ruta = datos.get("ruta")
+        if variableCorrecta(ruta) is False:
+            resultado = {"resultado": 7, "statusCode": "ruta null"}
+        else:
+            result = self.__dbController.getComentarios(ruta)
+            resultado = {"resultado": 69, "statusCode": self.__ok, "comentarios": result}
+        return resultado
+
 
     # endregion
     def resolverSolicitud(self, datos: dict):
@@ -329,13 +409,24 @@ class ResolutorSolicitudes:
                 resultado = self.__resolverGetMisVideos(datos)
             elif peticion == "getVideos":
                 resultado = self.__resolverGetVideos(datos)
+            elif peticion == "getVideosLike":
+                resultado = self.__resolverGetVideosLike(datos)
             elif peticion == "eliminarVideo":
                 resultado = self.__resolverEliminarVideo(datos)
+
+            elif peticion == "voto":
+                resultado = self.__resolverVoto(datos)
+            elif peticion == "verVotos":
+                resultado = self.__resolverVerVotos(datos)
+
+            elif peticion == "addComentario":
+                resultado = self.__resolverAddComentario(datos)
+            elif peticion == "getComentarios":
+                resultado = self.__resolverGetComentarios(datos)
 
             else:
                 resultado = {"resultado": 5, "statusCode": "Peticion invalida"}
         return resultado
-
 
 # res = ResolutorSolicitudes()
 # print(res.resolverSolicitud({"peticion": "login", "usuario": "Pato", "password": "Pato"}))
@@ -356,14 +447,11 @@ class ResolutorSolicitudes:
 
 # print(res.resolverSolicitud({"peticion": "eliminarVideo", "cookie": "332b893e-c940-4959-bd2b-0b5c96a04426", "nombrevideo": "Video 0 de pato.mp1"}))
 # print(res.resolverSolicitud({"peticion": "eliminarVideo", "cookie": "81f978e9-d793-474f-b8da-aba550bb573d", "nombrevideo": "Video 0 de pato.mp1"}))
-
 """for i in range(0, 10):
     print(res.resolverSolicitud({"peticion": "subirVideo", "cookie": "81f978e9-d793-474f-b8da-aba550bb573d",
                                  "nombreVideo": "Video " + str(i) + " de pato.mp1",
                                  "visualizacion": EnumType.Private.value,
                                  "etiquetas": "#Pato#PatoPutoAmo#PrimerVideo#PrimerUsuario", "size": "0"}))"""
-
-
 "81f978e9-d793-474f-b8da-aba550bb573d"
 "1970796d-b103-4eda-bf19-8a325d766d4c"
 "332b893e-c940-4959-bd2b-0b5c96a04426"

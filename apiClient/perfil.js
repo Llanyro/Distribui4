@@ -1,5 +1,5 @@
 
-window.onload = function() { this.getPerfil(); }
+window.onload = function() { getPerfil(); }
 
 function getPerfil() {
     var params = {
@@ -35,3 +35,4 @@ function getPerfil() {
     }
     catch(e) {console.log(e);}
 }
+window.onload = function() { getPerfil(); }

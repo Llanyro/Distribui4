@@ -1,10 +1,10 @@
 import sys
 import hashlib
 from sql import BaseDatos
-from Singleton import variableCorrectaList
+from Singleton import variableCorrectaList, variableCorrectaInt
 import datetime
 from enum import Enum
-
+import json
 
 class EnumType(Enum):
     Public = "public-read"
@@ -23,6 +23,29 @@ def impVideos(videos: list):
             print("Visualizacion: " + vid[5])
             print("Pecha Pub: " + str(vid[6]))
             print("")
+
+
+def toJSONList(videos: list):
+    if videos.__len__() == 0:
+        print("No hay videos disponibles")
+        jsonvideos = None
+    else:
+        jsonvideos = "{\"videos\": ["
+        size = 0
+        for vid in videos:
+            if size > 0:
+                jsonvideos += ","
+            jsonvideos += json.dumps({
+                "Nombre": vid[1],
+                "Usuario": vid[0],
+                "Etiquetas": vid[2],
+                "Fecha": str(vid[6]),
+                "Visualizacion": vid[5],
+                "Size": vid[3]
+            })
+            size += 1
+        jsonvideos += "]}"
+    return jsonvideos
 
 
 class ControladorBaseDatos(BaseDatos):
@@ -273,18 +296,13 @@ class ControladorBaseDatos(BaseDatos):
         else:
             command = "select * from " + self.__tablaVideos + " where usuarioVideo=%(usuario)s " \
                                                               "or estado=%(visualizacion)s limit %(lim)s, 20"
-            resultado = self.select(command, {"usuario": usuario, "lim": lim, "visualizacion": EnumType.Public.value})
+            resultado = toJSONList(self.select(command, {"usuario": usuario, "lim": lim, "visualizacion": EnumType.Public.value}))
         return resultado
 
     # Devuelve una lista de videos
-    def getVideos(self, usuario: str):
-        if variableCorrectaList([usuario]) is False:
-            resultado = None
-        else:
-            command = "select * from " + self.__tablaVideos + " where usuarioVideo=%(usuario)s " \
-                                                              "or estado=%(visualizacion)s"
-            resultado = self.select(command, {"usuario": usuario, "visualizacion": EnumType.Public.value})
-        return resultado
+    def getVideos(self):
+        command = "select * from " + self.__tablaVideos + " where estado=%(visualizacion)s"
+        return toJSONList(self.select(command, {"visualizacion": EnumType.Public.value}))
 
     # Devuelve los videos subidos por un usuario con un limite
     def getMyVideosLim(self, usuario: str, lim: int):
@@ -292,7 +310,7 @@ class ControladorBaseDatos(BaseDatos):
             resultado = None
         else:
             command = "select * from " + self.__tablaVideos + " where usuarioVideo=%(usuario)s limit %(lim)s, 20"
-            resultado = self.select(command, {"usuario": usuario, "lim": lim})
+            resultado = toJSONList(self.select(command, {"usuario": usuario, "lim": lim}))
         return resultado
 
     # Devuelve los videos subidos por un usuario
@@ -301,8 +319,15 @@ class ControladorBaseDatos(BaseDatos):
             resultado = None
         else:
             command = "select * from " + self.__tablaVideos + " where usuarioVideo=%(usuario)s"
-            resultado = self.select(command, {"usuario": usuario})
+            resultado = toJSONList(self.select(command, {"usuario": usuario}))
         return resultado
+
+    # Devuelve una lista de videos
+    def getVideosLike(self, nombreVideolike: str):
+        nombreResultado = '%' + nombreVideolike + '%'
+        command = "select * from " + self.__tablaVideos + " where estado=%(visualizacion)s " \
+                                                          "and nombreVideo like %(nombre)s"
+        return toJSONList(self.select(command, {"visualizacion": EnumType.Public.value, "nombre": nombreResultado}))
 
     # endregion
     # region Cookies
@@ -371,12 +396,87 @@ class ControladorBaseDatos(BaseDatos):
         return resultado
 
     # endregion
+    # region Votos
+    # Devuelve los comentarios asociados a un video
+    def insertarVoto(self, rutavideo: str, usuario: str, decision: int):
+        if variableCorrectaList([usuario, rutavideo]) is False:
+            resultado = False
+        elif variableCorrectaInt(decision) is False:
+            resultado = False
+        else:
+            command = "select COUNT(*) from " + self.__tablaVoto + " where usuario=%(usuario)s"
+            resultado = self.select(command, {"usuario": usuario})[0][0]
+            print(resultado)
+            if resultado == 0:
+                command = "insert " + self.__tablaVoto + " set usuario=%(usuario)s, ruta=%(ruta)s, decision=%(decision)s;"
+                resultado = self.update(command, {"usuario": usuario, "ruta": rutavideo, "decision": decision})
+                if resultado == 0:
+                    resultado = False
+                elif resultado == 1:
+                    resultado = True
+                else:
+                    resultado = False
+            elif resultado == -1 or resultado == -2:
+                resultado = False
+            elif resultado == 1:
+                command = "update " + self.__tablaVoto + " set decision=%(decision)s where usuario=%(usuario)s and ruta=%(ruta)s;"
+                resultado = self.update(command, {"usuario": usuario, "ruta": rutavideo, "decision": decision})
+                if resultado == 0:
+                    resultado = False
+                elif resultado == 1:
+                    resultado = True
+                else:
+                    resultado = False
+            else:
+                resultado = False
+        return resultado
 
+    def verVotosVideo(self, rutavideo: str):
+        if variableCorrectaList([rutavideo]) is False:
+            resultado = []
+        else:
+            resultado: list = []
+            command1 = "select COUNT(*) from " + self.__tablaVoto + " where decision=%(decision)s"
+            command2 = "select COUNT(*) from " + self.__tablaVoto + " where decision=%(decision)s"
+            resultado.append(self.select(command1, {"decision": 0})[0][0])
+            resultado.append(self.select(command2, {"decision": 1})[0][0])
+        return resultado
+
+    # endregion
+    # region Comentarios
+
+    def addComentario(self, rutavideo: str, usuario: str, comentario: str):
+        if variableCorrectaList([usuario, rutavideo, comentario]) is False:
+            resultado = False
+        else:
+            command = "insert into " + self.__tablaComentarios + " values ( %(usuario)s , %(ruta)s , %(contenido)s )"
+            resultado = self.update(command, {"usuario": usuario, "ruta": rutavideo, "contenido": comentario})
+            if resultado == 0:
+                resultado = False
+            elif resultado == 1:
+                resultado = True
+            else:
+                resultado = False
+        return resultado
+
+    def getComentarios(self, rutavideo: str):
+        if variableCorrectaList([rutavideo]) is False:
+            resultado = False
+        else:
+            command = "select usuario, contenido from " + self.__tablaComentarios + " where ruta=%(ruta)s"
+            resultado = self.select(command, {"ruta": rutavideo})
+        return resultado
+
+    # endregion
 
 local = "192.168.0.107"
 juinja = "192.168.1.41"
-
-# controlador = ControladorBaseDatos(juinja)
+# controlador = ControladorBaseDatos("35.173.219.123")
+# print(controlador.verVotosVideo("Fian/asdf"))
+# print(controlador.insertarVoto("Fian/asdf", "Fian", 0))
+# print(controlador.getVideosLike("asdf"))
+# print(controlador.getVideos())
+# print(json.load(toJSON(controlador.getVideos())))
 # print(controlador.getRespuestaValida("Pata", "Rojo"))
 # print(controlador.deleteUsuarioWEB("PaTo4", "Password1"))
 # print(controlador.deleteUsuario("Pato"))

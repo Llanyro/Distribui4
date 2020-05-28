@@ -47,23 +47,22 @@
             <div class="page-content inset">
                 <div class="row">
                     <div class="col-md-12">
-                        <p class="well lead">Perfil de usuario</p>
-                            <div class="container">
-                                <div>
-                                    <img src="https://phantom-elmundo.unidadeditorial.es/942bdc14136d5375429aa896cb8bc390/crop/130x0/1208x719/resize/746/f/jpg/assets/multimedia/imagenes/2020/03/24/15850661113045.jpg" alt="John" style="width:50%" style="height: 50%;">
+                        <p class="well lead">Videos</p>
+                            <div class="container" id="videocontainer">
+                                <div class="input-group add-on">
+                                    <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
+                                    <div class="input-group-btn">
+                                      <button class="btn btn-default" onclick="getVideosLike()">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                    </div>
                                 </div>
-                                Usuario: <p id="usuario"></p>
-                                Nombre: <p id="nombre"></p>
-                                Apellidos: <p id="apellidos"></p>
-                                Correo: <p id="correo"></p>
-                                Pregunta de seguridad:<p id="pregunta"></p>
-                                Respuesta: <p id="respuesta"></p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-	    </div>
+        </div>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
@@ -81,7 +80,8 @@
         <script type="text/javascript" src="apigClient.js"></script>
         <script type="text/javascript" src="cli.js"></script>
         <script type="text/javascript" src="cookies.js"></script>
-        <script type="text/javascript" src="perfil.js"></script>
+        <script type="text/javascript" src="tablas_coincidentes.js"></script>
+        <script type="text/javascript" src="videos_publicos.js"></script>
         <script type="text/javascript" src="navfunc.js"></script>
     </body>
 </html>

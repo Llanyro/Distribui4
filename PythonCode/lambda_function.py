@@ -1,6 +1,6 @@
 from S3Controller import ResolutorSolicitudes
 
-res = ResolutorSolicitudes()
+res = ResolutorSolicitudes("18.207.191.38", "distribui4")
 
 
 def lambda_handler(event, context):
@@ -11,4 +11,3 @@ def lambda_handler(event, context):
     else:
         resultado = res.resolverSolicitud(event)
     return resultado
-

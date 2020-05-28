@@ -1,0 +1,17 @@
+{
+    "expiration": "2020-12-30T12:00:00.000Z",
+    "conditions": [
+    {"bucket": "distribui4"},
+    ["starts-with", "$key", ""],
+    {"acl": "public-read"},
+    {"success_action_redirect": "http://distribui4.s3-website-us-east-1.amazonaws.com/apiClient/index.html"},
+    ["starts-with", "$Content-type", "binary"],
+    
+    {"x-amz-server-side-encryption": "AES256"},
+    ["starts-with", "$x-amz-meta-tag", ""],
+    
+    {"x-amz-credential": "/20200312/us-east-1/s3/aws4_request"},
+    {"x-amz-algorithm": "AWS4-HMAC-SHA256"},
+    {"x-amz-date": "20200401T000000Z"}
+    ]
+}

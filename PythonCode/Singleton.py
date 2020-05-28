@@ -41,3 +41,17 @@ def variableCorrectaList(var: list):
             if resultado is False:
                 break
     return resultado
+
+
+def allTrueList(var: list):
+    if var is None:
+        resultado = False
+    elif var.__len__() == 0:
+        resultado = False
+    else:
+        resultado = True
+        for i in var:
+            resultado = i
+            if resultado is False:
+                break
+    return resultado
