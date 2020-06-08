@@ -15,10 +15,10 @@ function rellenar_tabla(array, admin, nombrepagina) {
     for(let i = 0; i < array.length; i++) {
         let ruta = array[i].Usuario + "/" + array[i].Nombre;
         let row = document.createElement('tr');
-        row.onclick= function() {window.location.href = url + 'apiClient/ver_video.html?ruta=' + ruta;}
         table.appendChild(row);
 
         let nombre = document.createElement('td');
+        nombre.onclick= function() {window.location.href = url + 'apiClient/ver_video.html?ruta=' + ruta;}
         let usuario = document.createElement('td');
         let etiquetas = document.createElement('td');
         let fecha = document.createElement('td');

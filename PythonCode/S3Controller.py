@@ -383,7 +383,6 @@ class ResolutorSolicitudes:
             resultado = {"resultado": 69, "statusCode": self.__ok, "comentarios": result}
         return resultado
 
-
     # endregion
     def resolverSolicitud(self, datos: dict):
         peticion = datos.get("peticion")

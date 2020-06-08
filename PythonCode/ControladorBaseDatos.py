@@ -404,11 +404,12 @@ class ControladorBaseDatos(BaseDatos):
         elif variableCorrectaInt(decision) is False:
             resultado = False
         else:
-            command = "select COUNT(*) from " + self.__tablaVoto + " where usuario=%(usuario)s"
-            resultado = self.select(command, {"usuario": usuario})[0][0]
+            command = "select COUNT(*) from " + self.__tablaVoto + " where usuario=%(usuario)s and ruta=%(rutavideo)s"
+            resultado = self.select(command, {"usuario": usuario, "rutavideo": rutavideo})[0][0]
             print(resultado)
             if resultado == 0:
-                command = "insert " + self.__tablaVoto + " set usuario=%(usuario)s, ruta=%(ruta)s, decision=%(decision)s;"
+                command = "insert " + self.__tablaVoto + \
+                          " set usuario=%(usuario)s, ruta=%(ruta)s, decision=%(decision)s;"
                 resultado = self.update(command, {"usuario": usuario, "ruta": rutavideo, "decision": decision})
                 if resultado == 0:
                     resultado = False
@@ -419,7 +420,8 @@ class ControladorBaseDatos(BaseDatos):
             elif resultado == -1 or resultado == -2:
                 resultado = False
             elif resultado == 1:
-                command = "update " + self.__tablaVoto + " set decision=%(decision)s where usuario=%(usuario)s and ruta=%(ruta)s;"
+                command = "update " + self.__tablaVoto + \
+                          " set decision=%(decision)s where usuario=%(usuario)s and ruta=%(ruta)s;"
                 resultado = self.update(command, {"usuario": usuario, "ruta": rutavideo, "decision": decision})
                 if resultado == 0:
                     resultado = False
@@ -436,10 +438,12 @@ class ControladorBaseDatos(BaseDatos):
             resultado = []
         else:
             resultado: list = []
-            command1 = "select COUNT(*) from " + self.__tablaVoto + " where decision=%(decision)s"
-            command2 = "select COUNT(*) from " + self.__tablaVoto + " where decision=%(decision)s"
-            resultado.append(self.select(command1, {"decision": 0})[0][0])
-            resultado.append(self.select(command2, {"decision": 1})[0][0])
+            command1 = "select COUNT(*) from " + self.__tablaVoto + \
+                       " where decision=%(decision)s and ruta=%(rutavideo)s"
+            command2 = "select COUNT(*) from " + self.__tablaVoto + \
+                       " where decision=%(decision)s and ruta=%(rutavideo)s"
+            resultado.append(self.select(command1, {"decision": 0, "rutavideo": rutavideo})[0][0])
+            resultado.append(self.select(command2, {"decision": 1, "rutavideo": rutavideo})[0][0])
         return resultado
 
     # endregion
