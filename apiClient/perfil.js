@@ -18,12 +18,12 @@ function getPerfil() {
                 if (code === 69) {
                     let perfil = result.data.perfil;
                     console.log(perfil);
-                    document.getElementById("nombre").innerHTML = perfil.nombre;
-                    document.getElementById("apellidos").innerHTML = perfil.apellido;
-                    document.getElementById("pregunta").innerHTML = perfil.pregunta;
-                    document.getElementById("respuesta").innerHTML = perfil.respuesta;
-                    document.getElementById("correo").innerHTML = perfil.correo;
-                    document.getElementById("usuario").innerHTML = perfil.usuario;
+                    document.getElementById("nombre").innerHTML += perfil.nombre;
+                    document.getElementById("apellidos").innerHTML += perfil.apellido;
+                    document.getElementById("pregunta").innerHTML += perfil.pregunta;
+                    document.getElementById("respuesta").innerHTML += perfil.respuesta;
+                    document.getElementById("correo").innerHTML += perfil.correo;
+                    document.getElementById("usuario").innerHTML += perfil.usuario;
                 }
                 else {
                     console.log("Algo ha petado");
